@@ -1,112 +1,81 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
-import Button from './Button/Button';
 import Loader from './Loader/Loader';
+import Button from './Button/Button';
 import Modal from './Modal/Modal';
-import PropTypes from 'prop-types';
-import axios from 'axios';
+
+const API_KEY = '33346847-49a68cc77b2127185fe21774e';
 
 class App extends Component {
   state = {
-    query: '',
     images: [],
-    loading: false,
-    error: null,
+    query: '',
     page: 1,
-    showModal: false,
-    selectedImage: null,
-  };
-
-  static propTypes = {
-    images: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.number.isRequired,
-        webformatURL: PropTypes.string.isRequired,
-        largeImageURL: PropTypes.string.isRequired,
-      })
-    ),
-    loading: PropTypes.bool.isRequired,
-    showModal: PropTypes.bool.isRequired,
-    selectedImage: PropTypes.object,
-    error: PropTypes.string,
-    page: PropTypes.number.isRequired,
-    query: PropTypes.string.isRequired,
-  };
-
-  handleFormSubmit = query => {
-    this.setState({ query, images: [], page: 1 });
+    isLoading: false,
+    isModalOpen: false,
+    modalImageUrl: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { query, page } = this.state;
-
-    if (prevState.query !== query || prevState.page !== page) {
+    if (prevState.query !== this.state.query) {
       this.fetchImages();
     }
   }
 
+  onChangeQuery = query => {
+    this.setState({ query, page: 1, images: [] });
+  };
+
   fetchImages = () => {
     const { query, page } = this.state;
-    const API_KEY = '33346847-49a68cc77b2127185fe21774e';
     const url = `https://pixabay.com/api/?q=${query}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`;
 
-    this.setState({ loading: true });
+    this.setState({ isLoading: true });
 
-    axios
-      .get(url)
-      .then(response => {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
         this.setState(prevState => ({
-          images: [...prevState.images, ...response.data.hits],
+          images: [...prevState.images, ...data.hits],
           page: prevState.page + 1,
-          loading: false,
+          isLoading: false,
         }));
       })
       .catch(error => {
-        this.setState({ error: error.message, loading: false });
+        console.error('Error fetching images', error);
+        this.setState({ isLoading: false });
       });
   };
 
-  handleLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+  openModal = imageUrl => {
+    this.setState({ isModalOpen: true, modalImageUrl: imageUrl });
   };
 
-  handleImageClick = image => {
-    this.setState({ showModal: true, selectedImage: image });
-  };
-
-  handleModalClose = () => {
-    this.setState({ showModal: false, selectedImage: null });
+  closeModal = () => {
+    this.setState({ isModalOpen: false, modalImageUrl: '' });
   };
 
   render() {
-    const { images, loading, error, showModal, selectedImage } = this.state;
+    const { images, isLoading, isModalOpen, modalImageUrl } = this.state;
+    const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
-      <>
-        <Searchbar onSubmit={this.handleFormSubmit} />
+      <div>
+        <Searchbar onSubmit={this.onChangeQuery} />
 
-        {error && <p>{error}</p>}
+        <ImageGallery images={images} onImageClick={this.openModal} />
 
-        {images.length > 0 && (
-          <>
-            <ImageGallery
-              images={images}
-              onImageClick={this.handleImageClick}
-            />
-            {loading && <Loader />}
-            {!loading && <Button onClick={this.handleLoadMore} />}
-          </>
-        )}
+        {isLoading && <Loader />}
 
-        {showModal && (
-          <Modal onClose={this.handleModalClose}>
-            <img src={selectedImage.largeImageURL} alt={selectedImage.tags} />
+        {shouldRenderLoadMoreButton && <Button onClick={this.fetchImages} />}
+
+        {isModalOpen && (
+          <Modal onClose={this.closeModal}>
+            <img src={modalImageUrl} alt="" />
           </Modal>
         )}
-      </>
+      </div>
     );
   }
 }

@@ -3,24 +3,24 @@ import PropTypes from 'prop-types';
 
 class Searchbar extends Component {
   state = {
-    query: '',
-  };
-
-  static propTypes = {
-    onSubmit: PropTypes.func.isRequired,
+    inputValue: '',
   };
 
   handleInputChange = event => {
-    this.setState({ query: event.target.value });
+    this.setState({ inputValue: event.target.value });
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.onSubmit(this.state.query);
-    this.setState({ query: '' });
+    const { onSubmit } = this.props;
+    const { inputValue } = this.state;
+
+    onSubmit(inputValue);
   };
 
   render() {
+    const { inputValue } = this.state;
+
     return (
       <header className="searchbar">
         <form className="form" onSubmit={this.handleSubmit}>
@@ -34,7 +34,7 @@ class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={this.state.query}
+            value={inputValue}
             onChange={this.handleInputChange}
           />
         </form>
@@ -42,5 +42,9 @@ class Searchbar extends Component {
     );
   }
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default Searchbar;

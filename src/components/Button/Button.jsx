@@ -1,26 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class Button extends Component {
-  static propTypes = {
-    onClick: PropTypes.func.isRequired,
-    label: PropTypes.string.isRequired,
-  };
+const Button = ({ onClick }) => (
+  <button type="button" className="button" onClick={onClick}>
+    <span className="button-label">Load more</span>
+  </button>
+);
 
-  render() {
-    const { onClick, label } = this.props;
-    const { images } = this.props;
-
-    return (
-      <>
-        {images.length > 0 && (
-          <button type="button" className="Button" onClick={onClick}>
-            {label}
-          </button>
-        )}
-      </>
-    );
-  }
-}
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
 
 export default Button;
