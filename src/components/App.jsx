@@ -4,6 +4,7 @@ import ImageGallery from './ImageGallery/ImageGallery';
 import Loader from './Loader/Loader';
 import Button from './Button/Button';
 import Modal from './Modal/Modal';
+import css from '../components/App.module.css';
 
 const API_KEY = '33346847-49a68cc77b2127185fe21774e';
 
@@ -61,7 +62,7 @@ class App extends Component {
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
-      <div>
+      <div className={css.App}>
         <Searchbar onSubmit={this.onChangeQuery} />
 
         <ImageGallery images={images} onImageClick={this.openModal} />

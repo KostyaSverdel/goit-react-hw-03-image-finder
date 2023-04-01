@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import css from '../Button/Button.module.css';
 
 const Button = ({ onClick }) => (
-  <button type="button" className="button" onClick={onClick}>
+  <button className={css.Button} type="button" onClick={onClick}>
     <span className="button-label">Load more</span>
   </button>
 );
