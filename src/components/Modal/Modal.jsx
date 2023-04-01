@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import css from '../Modal/Modal.module.css';
 
 class Modal extends Component {
-  static propTypes = {
-    onClose: PropTypes.func.isRequired,
-    largeImageURL: PropTypes.string.isRequired,
-    alt: PropTypes.string.isRequired,
-  };
-
   componentDidMount() {
     window.addEventListener('keydown', this.handleKeyDown);
   }
@@ -29,15 +24,24 @@ class Modal extends Component {
   };
 
   render() {
-    const { largeImageURL, alt } = this.props;
+    const { modalImageUrl, alt } = this.props;
+    if (!modalImageUrl) {
+      return null;
+    }
     return (
-      <div className="Overlay" onClick={this.handleOverlayClick}>
-        <div className="Modal">
-          <img src={largeImageURL} alt={alt} />
+      <div className={css.Overlay} onClick={this.handleOverlayClick}>
+        <div className={css.Modal}>
+          <img src={modalImageUrl} alt={alt} />
         </div>
       </div>
     );
   }
 }
+
+Modal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  modalImageUrl: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+};
 
 export default Modal;

@@ -71,7 +71,7 @@ class App extends Component {
         {shouldRenderLoadMoreButton && <Button onClick={this.fetchImages} />}
 
         {isModalOpen && (
-          <Modal onClose={this.closeModal}>
+          <Modal onClose={this.closeModal} modalImageUrl={modalImageUrl} alt="">
             <img src={modalImageUrl} alt="" />
           </Modal>
         )}

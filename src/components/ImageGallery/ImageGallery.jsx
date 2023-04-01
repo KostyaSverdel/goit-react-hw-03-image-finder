@@ -8,7 +8,7 @@ const ImageGallery = ({ images, onImageClick }) => (
       <ImageGalleryItem
         key={id}
         src={webformatURL}
-        onClick={() => onImageClick(id)}
+        onClick={() => onImageClick(webformatURL)}
       />
     ))}
   </ul>
