@@ -3,17 +3,22 @@ import PropTypes from 'prop-types';
 import ImageGalleryItem from '../ImageGalleryItem/ImageGalleryItem';
 import css from '../ImageGallery/ImageGallery.module.css';
 
-const ImageGallery = ({ images, onImageClick }) => (
-  <ul className={css.ImageGallery}>
-    {images.map(({ id, webformatURL }) => (
-      <ImageGalleryItem
-        key={id}
-        src={webformatURL}
-        onClick={() => onImageClick(webformatURL)}
-      />
-    ))}
-  </ul>
-);
+const ImageGallery = ({ images, onImageClick }) => {
+  if (images.length === 0) {
+  }
+
+  return (
+    <ul className={css.ImageGallery}>
+      {images.map(({ id, webformatURL }) => (
+        <ImageGalleryItem
+          key={id}
+          src={webformatURL}
+          onClick={() => onImageClick(webformatURL)}
+        />
+      ))}
+    </ul>
+  );
+};
 
 ImageGallery.propTypes = {
   images: PropTypes.arrayOf(

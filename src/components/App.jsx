@@ -57,6 +57,15 @@ class App extends Component {
     this.setState({ isModalOpen: false, modalImageUrl: '' });
   };
 
+  handleLoadMore = () => {
+    this.setState(
+      prevState => ({ page: prevState.page + 1 }),
+      () => {
+        this.fetchImages();
+      }
+    );
+  };
+
   render() {
     const { images, isLoading, isModalOpen, modalImageUrl } = this.state;
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
@@ -69,7 +78,7 @@ class App extends Component {
 
         {isLoading && <Loader />}
 
-        {shouldRenderLoadMoreButton && <Button onClick={this.fetchImages} />}
+        {shouldRenderLoadMoreButton && <Button onClick={this.handleLoadMore} />}
 
         {isModalOpen && (
           <Modal onClose={this.closeModal} modalImageUrl={modalImageUrl} alt="">
