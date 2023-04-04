@@ -19,7 +19,10 @@ class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.query !== this.state.query) {
+    if (
+      prevState.query !== this.state.query ||
+      prevState.page !== this.state.page
+    ) {
       this.fetchImages();
     }
   }
@@ -39,7 +42,6 @@ class App extends Component {
       .then(data => {
         this.setState(prevState => ({
           images: [...prevState.images, ...data.hits],
-          page: prevState.page + 1,
           isLoading: false,
         }));
       })
@@ -60,9 +62,7 @@ class App extends Component {
   handleLoadMore = () => {
     this.setState(
       prevState => ({ page: prevState.page + 1 }),
-      () => {
-        this.fetchImages();
-      }
+      this.fetchImages
     );
   };
 
@@ -74,7 +74,9 @@ class App extends Component {
       <div className={css.App}>
         <Searchbar onSubmit={this.onChangeQuery} />
 
-        <ImageGallery images={images} onImageClick={this.openModal} />
+        {images.length > 0 && (
+          <ImageGallery images={images} onImageClick={this.openModal} />
+        )}
 
         {isLoading && <Loader />}
 
