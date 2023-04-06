@@ -32,16 +32,17 @@ class App extends Component {
   };
 
   fetchImages = () => {
-    const { query, page } = this.state;
+    const { query, page, images } = this.state;
     const url = `https://pixabay.com/api/?q=${query}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`;
-
-    this.setState({ isLoading: true });
 
     fetch(url)
       .then(response => response.json())
       .then(data => {
+        const newImages = data.hits.filter(
+          hit => !images.find(img => img.id === hit.id)
+        );
         this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
+          images: [...prevState.images, ...newImages],
           isLoading: false,
         }));
       })
@@ -60,13 +61,12 @@ class App extends Component {
   };
 
   handleLoadMore = () => {
-    this.setState(
-      prevState => ({ isLoading: true, page: prevState.page + 1 }),
-      () => {
-        this.fetchImages();
-      }
-    );
+    this.setState(prevState => ({
+      isLoading: true,
+      page: prevState.page + 1,
+    }));
   };
+
   render() {
     const { images, isLoading, isModalOpen, modalImageUrl } = this.state;
     const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
